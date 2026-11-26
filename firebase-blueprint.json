@@ -1,0 +1,108 @@
+{
+  "entities": {
+    "UserProfile": {
+      "title": "UserProfile",
+      "description": "Private user cycle preferences and profile metadata isolated per authenticated user.",
+      "type": "object",
+      "properties": {
+        "uid": {
+          "type": "string",
+          "description": "Firebase Auth user UID matching the document ID.",
+          "minLength": 1,
+          "maxLength": 128,
+          "pattern": "^[a-zA-Z0-9_\\-]+$"
+        },
+        "email": {
+          "type": "string",
+          "format": "email",
+          "description": "Authenticated user email address.",
+          "minLength": 3,
+          "maxLength": 254
+        },
+        "defaultCycleLength": {
+          "type": "integer",
+          "description": "Baseline average cycle length in days (15 to 60)."
+        },
+        "defaultPeriodDuration": {
+          "type": "integer",
+          "description": "Baseline average period duration in days (1 to 15)."
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Server timestamp when the profile was created."
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Server timestamp when the profile was last updated."
+        }
+      },
+      "required": [
+        "uid",
+        "email",
+        "defaultCycleLength",
+        "defaultPeriodDuration",
+        "createdAt",
+        "updatedAt"
+      ]
+    },
+    "PeriodLog": {
+      "title": "PeriodLog",
+      "description": "A single menstrual period log entry with start date and optional end date.",
+      "type": "object",
+      "properties": {
+        "user_id": {
+          "type": "string",
+          "description": "Firebase Auth UID of the user who owns this period log.",
+          "minLength": 1,
+          "maxLength": 128,
+          "pattern": "^[a-zA-Z0-9_\\-]+$"
+        },
+        "start_date": {
+          "type": "string",
+          "format": "date",
+          "description": "First day of the logged period in YYYY-MM-DD format.",
+          "minLength": 10,
+          "maxLength": 10,
+          "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+        },
+        "end_date": {
+          "type": "string",
+          "format": "date",
+          "description": "Last day of the logged period in YYYY-MM-DD format, or null when ongoing.",
+          "minLength": 10,
+          "maxLength": 10,
+          "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+        },
+        "created_at": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Server timestamp when the record was created."
+        },
+        "updated_at": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Server timestamp when the record was last updated."
+        }
+      },
+      "required": [
+        "user_id",
+        "start_date",
+        "end_date",
+        "created_at",
+        "updated_at"
+      ]
+    }
+  },
+  "firestore": {
+    "/users/{userId}": {
+      "schema": { "$ref": "#/entities/UserProfile" },
+      "description": "Private user preferences and cycle defaults keyed by Firebase Auth UID."
+    },
+    "/period_logs/{logId}": {
+      "schema": { "$ref": "#/entities/PeriodLog" },
+      "description": "Per-user menstrual period logs ordered by start_date."
+    }
+  }
+}
